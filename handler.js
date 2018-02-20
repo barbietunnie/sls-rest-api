@@ -11,11 +11,34 @@ const dynamoDb = new AWS.DynamoDB.DocumentClient({
 
 module.exports.create = (event, context, callback) => {
   // create a note and add it into the database
+  const data = JSON.parse(event.body);
+
+  const params = {
+    TableName: process.env.DYNAMODB_TABLE,
+    Item: {
+      id: uuid.v1(),
+      content: data.content
+    }
+  }
+
+  dynamoDb.put(params, (error) => {
+    if(error) {
+      console.error(error);
+
+      return callback(null, {
+        statusCode: error.statusCode || 500,
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          message: "Could not create note"
+        })
+      });
+    }
+  });
+
   const response = {
     statusCode: 200,
-    body: JSON.stringify('Add a note')
+    body: JSON.stringify(params.Item)
   };
-
   callback(null, response);
 }
 
