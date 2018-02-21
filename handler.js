@@ -144,10 +144,33 @@ module.exports.update = (event, context, callback) => {
 
 module.exports.delete = (event, context, callback) => {
   // delete a note in the database
-  const response = {
-    statusCode: 200,
-    body: JSON.stringify('Delete a note')
+  const params = {
+    TableName: process.env.DYNAMODB_TABLE,
+    Key: {
+      id: event.pathParameters.id
+    }
   };
 
-  callback(null, response);
+  dynamoDb.delete(params, (error) => {
+    if(error) {
+      console.error(error);
+
+      return callback(null, {
+        statusCode: error.statusCode || 500,
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          message: "Could not delete the note"
+        })
+      });
+    }
+
+    const response = {
+      statusCode: 200,
+      body: JSON.stringify({
+        message: `Removed the note with id #${event.pathParameters.id}`
+      })
+    };
+
+    callback(null, response);
+  });
 }
