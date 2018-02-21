@@ -5,8 +5,8 @@ const AWS = require('aws-sdk');
 
 // remove all localhost instances when deploying to live
 const dynamoDb = new AWS.DynamoDB.DocumentClient({
-  region: 'localhost',
-  endpoint: 'http://localhost:8000'
+  // region: 'localhost',
+  // endpoint: 'http://localhost:8000'
 });
 
 module.exports.create = (event, context, callback) => {

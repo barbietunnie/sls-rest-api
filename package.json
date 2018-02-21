@@ -10,9 +10,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "uuid": "^3.2.1"
+  },
+  "devDependencies": {
     "aws-sdk": "^2.198.0",
     "serverless-dynamodb-local": "^0.2.27",
-    "serverless-offline": "^3.18.0",
-    "uuid": "^3.2.1"
+    "serverless-offline": "^3.18.0"
   }
 }
