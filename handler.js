@@ -104,12 +104,42 @@ module.exports.getAll = (event, context, callback) => {
 
 module.exports.update = (event, context, callback) => {
   // update a note in the database
-  const response = {
-    statusCode: 200,
-    body: JSON.stringify('Update a note')
+  const data = JSON.parse(event.body);
+
+  const params = {
+    TableName: process.env.DYNAMODB_TABLE,
+    Key: {
+      id: event.pathParameters.id
+    },
+    ExpressionAttributeValues: {
+      ':content': data.content
+    },
+    UpdateExpression: 'SET content = :content',
+    ReturnValues: 'ALL_NEW'
   };
 
-  callback(null, response);
+  dynamoDb.update(params, (error, result) => {
+    if(error) {
+      console.error(error);
+
+      return callback(null, {
+        statusCode: error.statusCode || 500,
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          message: "Could not update the note"
+        })
+      });
+    }
+
+    const response = {
+      statusCode: 200,
+      body: JSON.stringify({
+        message: result.Attributes
+      })
+    };
+
+    callback(null, response);
+  });
 }
 
 module.exports.delete = (event, context, callback) => {
